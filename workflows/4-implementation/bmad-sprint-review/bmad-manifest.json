@@ -1,0 +1,14 @@
+{
+  "module-code": "spa",
+  "capabilities": [
+    {
+      "name": "review-sprint",
+      "menu-code": "SR",
+      "description": "Produce a final sprint summary from sprint-status.yaml.",
+      "supports-headless": true,
+      "phase-name": "4-implementation",
+      "after": ["run-sprint"],
+      "output-location": "{implementation_artifacts}"
+    }
+  ]
+}

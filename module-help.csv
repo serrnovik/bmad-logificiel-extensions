@@ -1,0 +1,3 @@
+module,phase,name,code,sequence,workflow-file,command,required,agent,options,description,output-location,outputs,
+spa,4-implementation,Sprint Automation,SA,55,skill:bmad-sprint-automation,bmad-spa-sprint-automation,false,sm,Automation Mode,"Automate create-story, dev-story, code-review, and optional final sprint review until the sprint is complete or a halt policy is triggered",implementation_artifacts,"automation report",
+spa,4-implementation,Sprint Review,SR,65,skill:bmad-sprint-review,bmad-spa-sprint-review,false,sm,Create Mode,"Generate a final sprint summary from sprint-status.yaml with completed work, unresolved items, and escalation points",implementation_artifacts,"sprint review report",

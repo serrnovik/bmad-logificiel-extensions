@@ -1,0 +1,15 @@
+code: spa
+name: "Logificiel Sprint Automation"
+description: "Autonomous sprint orchestration and sprint review extensions for BMAD"
+version: "0.1.0"
+default_selected: false
+dependencies:
+  - bmm
+
+post-install-notes: |
+  Logificiel Sprint Automation installed.
+
+  Recommended usage:
+  1. Run Sprint Planning first if sprint-status.yaml does not exist.
+  2. Run Sprint Automation to execute the story loop.
+  3. Run Sprint Review for a final report at the end of the sprint.

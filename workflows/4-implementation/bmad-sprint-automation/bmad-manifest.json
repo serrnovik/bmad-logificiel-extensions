@@ -1,0 +1,15 @@
+{
+  "module-code": "spa",
+  "capabilities": [
+    {
+      "name": "run-sprint",
+      "menu-code": "SA",
+      "description": "Run the autonomous sprint loop using BMAD sprint status as the source of truth.",
+      "supports-headless": true,
+      "phase-name": "4-implementation",
+      "after": ["bmad-sprint-planning"],
+      "before": ["bmad-retrospective"],
+      "output-location": "{implementation_artifacts}"
+    }
+  ]
+}
