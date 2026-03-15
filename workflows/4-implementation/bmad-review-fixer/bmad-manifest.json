@@ -1,0 +1,13 @@
+{
+  "module-code": "spa",
+  "capabilities": [
+    {
+      "name": "review-and-fix-story",
+      "menu-code": "RFX",
+      "description": "Fresh-context worker that reviews one BMAD story, auto-fixes issues, and returns a structured outcome.",
+      "supports-headless": true,
+      "phase-name": "4-implementation",
+      "output-location": "{implementation_artifacts}"
+    }
+  ]
+}

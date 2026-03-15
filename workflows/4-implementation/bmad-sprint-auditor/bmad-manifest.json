@@ -1,0 +1,13 @@
+{
+  "module-code": "spa",
+  "capabilities": [
+    {
+      "name": "audit-sprint",
+      "menu-code": "SAR",
+      "description": "Fresh-context worker that writes the final sprint review report and returns a structured outcome.",
+      "supports-headless": true,
+      "phase-name": "4-implementation",
+      "output-location": "{implementation_artifacts}"
+    }
+  ]
+}

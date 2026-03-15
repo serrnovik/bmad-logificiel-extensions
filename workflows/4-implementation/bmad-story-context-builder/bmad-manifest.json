@@ -1,0 +1,13 @@
+{
+  "module-code": "spa",
+  "capabilities": [
+    {
+      "name": "build-story-context",
+      "menu-code": "SCB",
+      "description": "Fresh-context worker that creates one BMAD story artifact and returns a structured outcome.",
+      "supports-headless": true,
+      "phase-name": "4-implementation",
+      "output-location": "{implementation_artifacts}"
+    }
+  ]
+}

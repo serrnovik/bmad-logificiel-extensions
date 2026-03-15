@@ -1,0 +1,13 @@
+{
+  "module-code": "spa",
+  "capabilities": [
+    {
+      "name": "develop-story",
+      "menu-code": "SDV",
+      "description": "Fresh-context worker that develops one BMAD story and returns a structured outcome.",
+      "supports-headless": true,
+      "phase-name": "4-implementation",
+      "output-location": "{implementation_artifacts}"
+    }
+  ]
+}

@@ -30,6 +30,23 @@ If the host cannot spawn subagents or fresh sessions, the workflow falls back to
 - Work in Claude, Codex, Cursor, and similar hosts through a host-neutral workflow contract.
 - Require one local, non-pushed commit per completed story.
 
+## Preferred Hosts
+
+Primary target hosts:
+
+- Codex
+- Claude
+
+For those hosts, use native subagents or fresh delegated sessions as the primary execution model.
+
+Nice-to-have hosts:
+
+- Cursor
+- Gemini
+- Antigravity
+
+For those, adapter-specific support is optional and not the primary design target.
+
 ## Repository Layout
 
 ```text

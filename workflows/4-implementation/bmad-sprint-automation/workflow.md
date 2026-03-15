@@ -6,8 +6,9 @@
 
 - Own the sprint loop end to end.
 - Use `sprint-status.yaml` as the source of truth.
-- Prefer delegation to existing BMAD workflows over duplicating their logic.
-- If subagent spawning is unavailable, execute the delegated workflow inline by loading its workflow file and following it directly.
+- For Codex and Claude, you MUST use fresh delegated subagents for phase execution instead of doing phase work inline.
+- Prefer delegation to dedicated SPA worker skills over directly doing story work in the conductor context.
+- Inline phase execution is fallback-only, used only when subagent spawning is genuinely unavailable.
 - Do not ask the user for routine routing choices while `automation_mode` is enabled.
 - Stop only for explicit halt policies, missing prerequisites, or final sprint completion.
 
@@ -54,18 +55,30 @@ The host adapter should provide:
 - `delegate(skill_name, args)`
 - `fallback_inline(skill_path, args)`
 
+If `delegate(...)` is supported, use it.
 If `delegate(...)` is not supported, load the referenced workflow and run it inline with the same inputs and policy.
 
 ### Delegation Model
 
-Treat these as separate clean-context workers whenever the host supports it:
+For Codex and Claude, treat these as REQUIRED separate clean-context workers:
 
-- `story-context-builder` -> `bmad-create-story`
-- `story-developer` -> `bmad-dev-story`
-- `review-fixer` -> `bmad-code-review`
-- `sprint-auditor` -> `bmad-sprint-review`
+- `story-context-builder` -> `bmad-story-context-builder`
+- `story-developer` -> `bmad-story-developer`
+- `review-fixer` -> `bmad-review-fixer`
+- `sprint-auditor` -> `bmad-sprint-auditor`
 
 The conductor should route work and track state, but it should not carry full cross-story implementation context unless the host has no real subagent support.
+
+### Codex / Claude Execution Rule
+
+When running in Codex or Claude:
+
+- Explicitly say `Use sub-agents for this task.`
+- Name the worker to spawn.
+- Pass only the minimum necessary story key, story path, project, and repo context.
+- Wait for the worker result.
+- Continue the loop yourself after the worker returns.
+- Do not stop after a single phase unless a halt condition is triggered.
 
 ---
 
@@ -101,7 +114,7 @@ The conductor should route work and track state, but it should not carry full cr
 
   <check if="there is any story with status `review`">
     <action>Pick the first `review` story in file order</action>
-    <action>Delegate to `bmad-code-review` with `automation_mode=true` and `review_fix_mode=auto`</action>
+    <action>Delegate to `bmad-review-fixer` using a fresh subagent with the story key and explicit story path</action>
     <action>Reload sprint-status.yaml</action>
     <action>GOTO step 4</action>
   </check>
@@ -113,7 +126,7 @@ The conductor should route work and track state, but it should not carry full cr
       <action>Add halt reason: `Story exceeded retry budget: {story_key}`</action>
       <action>HALT</action>
     </check>
-    <action>Delegate to `bmad-dev-story` for that story</action>
+    <action>Delegate to `bmad-story-developer` using a fresh subagent with the story key and explicit story path</action>
     <action>Reload sprint-status.yaml</action>
     <action>GOTO step 4</action>
   </check>
@@ -125,14 +138,14 @@ The conductor should route work and track state, but it should not carry full cr
       <action>Add halt reason: `Story exceeded retry budget: {story_key}`</action>
       <action>HALT</action>
     </check>
-    <action>Delegate to `bmad-dev-story` for that story</action>
+    <action>Delegate to `bmad-story-developer` using a fresh subagent with the story key and explicit story path</action>
     <action>Reload sprint-status.yaml</action>
     <action>GOTO step 4</action>
   </check>
 
   <check if="there is any story with status `backlog`">
     <action>Pick the first `backlog` story in file order</action>
-    <action>Delegate to `bmad-create-story`</action>
+    <action>Delegate to `bmad-story-context-builder` using a fresh subagent with the story key</action>
     <action>Reload sprint-status.yaml</action>
     <action>GOTO step 4</action>
   </check>
@@ -184,7 +197,7 @@ The conductor should route work and track state, but it should not carry full cr
 
 <step n="5" goal="Generate final sprint review">
   <check if="run_sprint_review_on_complete is true">
-    <action>Delegate to `bmad-sprint-review`</action>
+    <action>Delegate to `bmad-sprint-auditor` using a fresh subagent</action>
   </check>
 
   <output>✅ Sprint automation finished.</output>
@@ -196,12 +209,15 @@ The conductor should route work and track state, but it should not carry full cr
 
 ## Notes For Host Adapters
 
-### Claude / Codex / Cursor
+### Claude / Codex
 
-- Fresh-context delegation is preferred for `create-story`, `dev-story`, and `code-review`.
+- Fresh-context subagents are REQUIRED, not optional.
 - Pass the target story path or key whenever possible instead of relying on auto-discovery after the first loop decision.
+- The conductor must remain thin and must not absorb implementation detail from multiple stories.
+
+### Fallback Hosts
+
 - When a host lacks native subagents, emulate delegation by loading the referenced workflow file and executing it inline.
-- If the host supports separate agent sessions, run each story phase in its own fresh session and return only structured outcome data to the conductor.
 
 ### Required Behavior Overrides
 
